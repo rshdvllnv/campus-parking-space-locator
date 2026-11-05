@@ -39,9 +39,20 @@ class Row(dict):
 
 
 def _row_factory(cursor):
-    names = [c.name if hasattr(c, "name") else c[0] for c in cursor.description]
+    if cursor.description is None:
+        return None
+
+    names = [
+        c.name if hasattr(c, "name") else c[0]
+        for c in cursor.description
+    ]
+
     def make(values):
-        return Row((n, v.strftime(FMT) if isinstance(v, datetime) else v) for n, v in zip(names, values))
+        return Row(
+            (n, v.strftime(FMT) if isinstance(v, datetime) else v)
+            for n, v in zip(names, values)
+        )
+
     return make
 
 
@@ -103,7 +114,14 @@ def init_db():
     try:
         schema = open(os.path.join(BASE, "schema_pg.sql" if USE_PG else "schema.sql")).read()
         if USE_PG:
-            con.execute(schema)
+            statements = [
+                statement.strip()
+                for statement in schema.split(";")
+                if statement.strip()
+            ]
+
+            for statement in statements:
+                con.execute(statement)
         else:
             con.raw.executescript(schema)
         con.commit()
@@ -125,7 +143,9 @@ def init_db():
                         (sid, "FAC 2026", now().strftime(FMT)))
             con.commit()
     except DB_ERRORS:
-        con.rollback()                       # another instance seeded at the same moment
+        con.rollback()
+        app.logger.exception("Database initialization failed")
+        raise
     finally:
         con.close()
 
