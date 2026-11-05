@@ -1,7 +1,9 @@
 {% extends "base.html" %}
+{% block title %}{{ zone.zone_name }} slots · Campus Parking{% endblock %}
 {% block nav %}<div class="navrow"><a class="back" href="{{ url_for('dashboard') }}">&larr; Back</a><h1>{{ zone.zone_name }} slots</h1></div>{% endblock %}
 {% block body %}
-<div id="live" style="display:flex;flex-direction:column;gap:16px;flex:1">
+{% if not current_user %}<div class="notice info"><div><b>Browsing as a guest</b><div class="muted">Sign in when you are ready to reserve a slot.</div></div><a class="btn small" href="{{ url_for('login', next=url_for('zone_slots', zone_id=zone.zone_id)) }}">Sign in</a></div>{% endif %}
+<div id="live" class="stack livearea" aria-live="polite">
 <div class="label">Choose an available slot</div>
 <div class="muted">{{ zone.available }} available / {{ zone.total_capacity }} total · updated {{ now().strftime('%H:%M:%S') }}</div>
 {% if not zone.available %}<div class="flash warning">No free slot in this zone. <a href="{{ url_for('dashboard') }}">Choose another zone</a>.</div>{% endif %}
@@ -19,7 +21,7 @@
 </div>
 <div class="footer">
 {% if sel %}<a class="btn" href="{{ url_for('review', slot=sel) }}">Continue</a>
-{% else %}<span class="btn disabled" aria-disabled="true">Continue</span><p class="reason">Select an available slot to continue.</p>{% endif %}
+{% else %}<span class="btn disabled" aria-disabled="true">Continue</span><p class="reason" style="text-align:center">Select an available slot to continue.</p>{% endif %}
 <a class="btn sec" href="{{ url_for('dashboard') }}">Back</a></div>
 {% endblock %}
 {% block scripts %}<script>

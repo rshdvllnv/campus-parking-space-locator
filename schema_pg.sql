@@ -29,3 +29,16 @@ CREATE TABLE IF NOT EXISTS reservation (
   status           VARCHAR(15) NOT NULL CHECK (status IN ('Active','Completed','Expired','Cancelled'))
 );
 CREATE UNIQUE INDEX IF NOT EXISTS ux_one_active_per_slot ON reservation(slot_id) WHERE status = 'Active';
+
+-- EXT: application accounts (authentication, roles and ownership)
+CREATE TABLE IF NOT EXISTS app_user (
+  user_id       SERIAL PRIMARY KEY,
+  username      VARCHAR(40)  NOT NULL UNIQUE,
+  email         VARCHAR(120) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role          VARCHAR(10)  NOT NULL CHECK (role IN ('Driver','Admin')),
+  driver_id     INTEGER UNIQUE REFERENCES driver(driver_id),
+  is_active     SMALLINT NOT NULL DEFAULT 1 CHECK (is_active IN (0,1)),
+  created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS ix_app_user_role ON app_user(role);

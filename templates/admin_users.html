@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block cls %}wide{% endblock %}
+{% block title %}User accounts · Campus Parking{% endblock %}
+{% block nav %}<div class="navrow"><a class="back" href="{{ url_for('admin') }}">&larr; Dashboard</a><h1>User accounts</h1><span class="spacer"></span><a class="back" href="{{ url_for('admin_reports') }}">Reports</a></div>{% endblock %}
+{% block body %}
+<section class="card">
+  <div class="row"><div><div class="label">{{ users|length }} accounts</div><div class="muted">Drivers can reserve slots; administrators manage zones, users and reports.</div></div></div>
+  <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>User</th><th>Name</th><th>Role</th><th>Vehicles</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead><tbody>
+  {% for u in users %}
+    <tr>
+      <td><b>{{ u.username }}</b><div class="muted">{{ u.email }}</div></td>
+      <td>{{ u.driver_name or '—' }}</td>
+      <td><span class="badge {{ 'b-res' if u.role == 'Admin' else 'b-av' }}">{{ u.role }}</span></td>
+      <td>{{ u.vehicles if u.driver_id else '—' }}</td>
+      <td>{% if u.is_active %}<span class="badge b-av">Active</span>{% else %}<span class="badge b-full">Disabled</span>{% endif %}</td>
+      <td class="muted">{{ u.created_at[:10] if u.created_at else '—' }}</td>
+      <td>
+        {% if u.user_id == current_user.user_id %}
+          <span class="muted">Current account</span>
+        {% else %}
+          <div class="inline" style="flex-wrap:wrap">
+            <form method="post" action="{{ url_for('admin_user_role', user_id=u.user_id) }}" class="inline">
+              <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+              <select name="role" aria-label="Role for {{ u.username }}" style="min-height:40px;min-width:110px">
+                <option value="Driver" {{ 'selected' if u.role == 'Driver' }}>Driver</option>
+                <option value="Admin" {{ 'selected' if u.role == 'Admin' }}>Admin</option>
+              </select>
+              <button class="btn sec small" type="submit">Set role</button>
+            </form>
+            <form method="post" action="{{ url_for('admin_user_active', user_id=u.user_id) }}">
+              <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+              <button class="btn {{ 'danger' if u.is_active else 'sec' }} small" type="submit">{{ 'Deactivate' if u.is_active else 'Activate' }}</button>
+            </form>
+          </div>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody></table></div>
+  <p class="muted" style="margin:12px 0 0">Deactivating a driver releases any active hold and blocks future sign-ins. You cannot change or deactivate your own account.</p>
+</section>
+{% endblock %}

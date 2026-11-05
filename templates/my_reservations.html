@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}My reservations · Campus Parking{% endblock %}
+{% block nav %}<div class="navrow"><h1>My reservations</h1><span class="spacer"></span><a class="back" href="{{ url_for('dashboard') }}">Find parking</a></div>{% endblock %}
+{% block body %}
+<section class="card">
+  <div class="row"><div><div class="label">Reservation history</div><div class="muted">Your last 30 reservations, newest first.</div></div><a class="btn small" href="{{ url_for('dashboard') }}">Reserve a slot</a></div>
+  <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Reference</th><th>Slot</th><th>Vehicle</th><th>Reserved at</th><th>Status</th><th>Action</th></tr></thead><tbody>
+  {% for r in reservations %}
+    <tr><td><b>PK-{{ '%06d' % r.res_id }}</b></td>
+      <td>{{ r.zone_name }} · {{ r.slot_label }}</td>
+      <td>{{ r.plate_number }}</td>
+      <td>{{ r.reservation_time }}</td>
+      <td><span class="badge {{ {'Active':'b-res','Completed':'b-av','Expired':'b-full','Cancelled':'b-occ'}[r.status] }}">{{ r.status }}</span>
+        {% if r.status == 'Active' %}<span class="muted"> {{ r.secs // 60 }}m {{ '%02d' % (r.secs % 60) }}s left</span>{% endif %}</td>
+      <td>{% if r.status == 'Active' %}<a class="btn sec small" href="{{ url_for('active', res_id=r.res_id) }}">View hold</a>
+        {% elif r.status == 'Completed' %}<a class="btn sec small" href="{{ url_for('arrived', res_id=r.res_id) }}">Receipt</a>
+        {% else %}<span class="muted">Ended</span>{% endif %}</td></tr>
+  {% else %}
+    <tr><td colspan="6" class="muted">You have no reservations yet. <a href="{{ url_for('dashboard') }}">Choose a zone</a> to get started.</td></tr>
+  {% endfor %}
+  </tbody></table></div>
+</section>
+{% endblock %}

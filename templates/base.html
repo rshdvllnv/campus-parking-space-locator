@@ -1,12 +1,51 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
 <title>{% block title %}Campus Parking Space Locator{% endblock %}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
-<body><div class="app {% block cls %}{% endblock %}">
-<header class="top"><div class="logo">P</div><div class="brand">Campus Parking Space Locator</div>
-<span class="spacer"></span>{% block toplink %}<a class="back" href="{{ url_for('admin') }}">Admin</a>{% endblock %}</header>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="app {% block cls %}{% endblock %}">
+<header class="top">
+  <a class="identity" href="{{ url_for('dashboard') }}" aria-label="Campus Parking home">
+    <span class="logo" aria-hidden="true">P</span>
+    <span><span class="brand">Campus Parking</span><span class="subbrand">Space Locator</span></span>
+  </a>
+  <span class="spacer"></span>
+  <nav class="topnav" aria-label="Main navigation">
+    {% if current_user %}
+      {% if current_user.role == 'Admin' %}
+        <a href="{{ url_for('admin') }}" class="{{ 'on' if request.endpoint == 'admin' }}">Dashboard</a>
+        <a href="{{ url_for('admin_reports') }}" class="{{ 'on' if request.endpoint in ('admin_reports','admin_reports_csv') }}">Reports</a>
+        <a href="{{ url_for('admin_users') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('admin_user') }}">Users</a>
+      {% else %}
+        <a href="{{ url_for('dashboard') }}" class="{{ 'on' if request.endpoint in ('dashboard','zone_slots') }}">Find parking</a>
+        <a href="{{ url_for('my_reservations') }}" class="{{ 'on' if request.endpoint in ('my_reservations','active','arrived') }}">My reservations{% if nav_active_res %}<span class="dot" aria-label="active reservation"></span>{% endif %}</a>
+      {% endif %}
+      <a class="userchip" href="{{ url_for('account') }}" title="Account settings">
+        {{ current_user.username }} <span class="rolebadge">{{ current_user.role }}</span>
+      </a>
+      <form method="post" action="{{ url_for('logout') }}" class="logoutform">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <button class="linkbtn" type="submit">Sign out</button>
+      </form>
+    {% else %}
+      <a href="{{ url_for('login') }}">Sign in</a>
+      <a class="btn small topbtn" href="{{ url_for('register') }}">Create account</a>
+    {% endif %}
+  </nav>
+</header>
 {% block nav %}{% endblock %}
-<main>
+<main id="main">
 {% with msgs = get_flashed_messages(with_categories=true) %}{% for c,m in msgs %}<div class="flash {{c}}" role="alert">{{m}}</div>{% endfor %}{% endwith %}
 {% block body %}{% endblock %}
-</main></div>{% block scripts %}{% endblock %}</body></html>
+</main>
+<footer class="foot">CPE 304L · Group 12 · Campus Parking Space Locator</footer>
+</div>
+{% block scripts %}{% endblock %}
+</body>
+</html>

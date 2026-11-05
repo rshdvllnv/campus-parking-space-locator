@@ -1,30 +1,35 @@
 {% extends "base.html" %}
 {% block cls %}mid{% endblock %}
+{% block title %}Active reservation · Campus Parking{% endblock %}
 {% block nav %}<div class="navrow"><a class="back" href="{{ url_for('dashboard') }}">&larr; Back</a><h1>Active Reservation</h1></div>{% endblock %}
 {% block body %}
 {% if r.status == 'Active' %}
 <section class="card"><div class="row"><span>My Reservation</span><span class="badge b-res">&#9719; Reserved</span></div>
 <div class="slotbox" style="margin:12px 0"><span class="muted" style="font-weight:600;font-size:14px">{{ r.zone_name }}</span><b>{{ r.slot_label }}</b></div>
 <div class="row"><span class="muted">Reference</span><b>PK-{{ '%06d' % r.res_id }}</b></div>
-<div class="row"><span class="muted">Vehicle</span><b>{{ r.plate_number }}</b></div></section>
+<div class="row"><span class="muted">Vehicle</span><b>{{ r.plate_number }} · {{ r.vehicle_type }}</b></div>
+<div class="row"><span class="muted">Driver</span><b>{{ r.driver_name }}</b></div>
+<p class="muted" style="margin:8px 0 0">Reserved at {{ r.reservation_time[11:16] }} · hold expires after {{ HOLD_MIN }} minutes or on confirmation.</p></section>
 <section class="slotbox"><div class="label">&#9201; Reservation time remaining</div>
 <div><span class="timer" id="timer">--:--</span> <span>remaining</span></div>
 <div class="bar navy"><i id="pbar" style="width:100%"></i></div>
 <div class="muted" id="tnote">Live timer. Your {{ HOLD_MIN }}-minute hold cannot be extended.</div></section>
 <div class="footer"><button class="btn" type="button" id="arrBtn" onclick="document.getElementById('arrDlg').showModal()">Confirm Arrival</button>
 <p class="muted" style="margin:0">Confirm only when parked in {{ r.slot_label }}.</p>
-<button class="btn danger" type="button" id="canBtn" onclick="document.getElementById('canDlg').showModal()">Cancel Reservation</button></div>
+<button class="btn danger" type="button" id="canBtn" onclick="document.getElementById('canDlg').showModal()">Cancel Reservation</button>
+<a class="btn sec" href="{{ url_for('my_reservations') }}">My reservations</a></div>
 <dialog id="arrDlg" aria-labelledby="arrT"><h2 id="arrT">Are you parked in {{ r.slot_label }}?</h2>
 <p style="margin:0">Confirming changes {{ r.slot_label }} from Reserved to <b>Occupied</b> and stops your countdown. This cannot be undone.</p>
-<div class="actions"><form method="post" action="{{ url_for('arrive', res_id=r.res_id) }}"><button class="btn" type="submit">Yes, I'm parked</button></form>
+<div class="actions"><form method="post" action="{{ url_for('arrive', res_id=r.res_id) }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn" type="submit">Yes, I'm parked</button></form>
 <button class="btn sec" type="button" onclick="this.closest('dialog').close()">Not yet</button></div></dialog>
 <dialog id="canDlg" aria-labelledby="canT"><h2 id="canT">Cancel reservation?</h2>
 <p style="margin:0">{{ r.slot_label }} will be released immediately so other drivers can reserve it.</p>
-<div class="actions"><form method="post" action="{{ url_for('cancel', res_id=r.res_id) }}"><button class="btn danger" type="submit">Yes, cancel reservation</button></form>
+<div class="actions"><form method="post" action="{{ url_for('cancel', res_id=r.res_id) }}"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button class="btn danger" type="submit">Yes, cancel reservation</button></form>
 <button class="btn sec" type="button" onclick="this.closest('dialog').close()">Keep reservation</button></div></dialog>
 {% else %}
 <div class="flash warning"><b>Reservation {{ r.status|lower }}.</b> The hold on {{ r.slot_label }} has ended. Please choose a slot again.</div>
-<div class="footer"><a class="btn" href="{{ url_for('dashboard') }}">Return to Dashboard</a></div>
+<div class="footer"><a class="btn" href="{{ url_for('dashboard') }}">Return to Dashboard</a>
+<a class="btn sec" href="{{ url_for('my_reservations') }}">My reservations</a></div>
 {% endif %}
 {% endblock %}
 {% block scripts %}{% if r.status == 'Active' %}<script>

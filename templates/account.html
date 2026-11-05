@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block cls %}mid{% endblock %}
+{% block title %}My account · Campus Parking{% endblock %}
+{% block nav %}<div class="navrow"><h1>My account</h1><span class="spacer"></span><span class="badge b-res">{{ user.role }}</span></div>{% endblock %}
+{% block body %}
+<section class="card">
+  <div class="row"><div><div class="label">{{ user.driver_name or 'Administrator' }}</div><div class="muted">@{{ user.username }} · {{ user.email }}</div></div>
+  <span class="muted">Member since {{ user.created_at[:10] if user.created_at else '—' }}</span></div>
+</section>
+
+<div class="cols">
+<section class="card">
+  <h2>Profile</h2>
+  <p class="muted">Your name appears on reservation records.</p>
+  <form method="post" action="{{ url_for('account') }}" class="formcol">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="profile">
+    {% if user.driver_id %}<div><label class="field" for="full_name">Full name</label>
+      <input id="full_name" name="full_name" maxlength="100" required value="{{ user.driver_name }}"></div>{% endif %}
+    <div><label class="field" for="email">Email</label>
+      <input id="email" name="email" type="email" maxlength="120" required value="{{ user.email }}"></div>
+    <button class="btn" type="submit">Save profile</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Change password</h2>
+  <p class="muted">Use at least 8 characters with a letter and a number.</p>
+  <form method="post" action="{{ url_for('account') }}" class="formcol">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <input type="hidden" name="action" value="password">
+    <div><label class="field" for="current_password">Current password</label>
+      <input id="current_password" name="current_password" type="password" autocomplete="current-password" required></div>
+    <div class="formgrid">
+      <div><label class="field" for="new_password">New password</label>
+        <input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="8" required></div>
+      <div><label class="field" for="confirm_password">Confirm new password</label>
+        <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" required></div>
+    </div>
+    <button class="btn" type="submit">Update password</button>
+  </form>
+</section>
+</div>
+
+{% if user.driver_id %}
+<section class="card">
+  <div class="row"><div><h2>My vehicles</h2><p class="muted" style="margin:4px 0 0">Only your vehicles can be used for reservations.</p></div><span class="pill">{{ vehicles|length }} registered</span></div>
+  {% if vehicles %}
+  <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Plate</th><th>Type</th><th>Action</th></tr></thead><tbody>
+    {% for v in vehicles %}<tr><td><b>{{ v.plate_number }}</b></td><td>{{ v.vehicle_type }}</td>
+      <td><form method="post" action="{{ url_for('account') }}" onsubmit="return confirm('Remove {{ v.plate_number }}?')">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="vehicle_remove">
+        <input type="hidden" name="plate_number" value="{{ v.plate_number }}">
+        <button class="btn danger small" type="submit">Remove</button></form></td></tr>{% endfor %}
+  </tbody></table></div>
+  {% else %}<p class="empty" style="margin-top:12px">No vehicles registered yet. Add one below before reserving.</p>{% endif %}
+  <form method="post" action="{{ url_for('account') }}" class="inline" style="margin-top:16px;flex-wrap:wrap">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="action" value="vehicle_add">
+    <input type="text" name="plate_number" placeholder="Plate number, e.g. NBC 1234" maxlength="15" aria-label="Plate number" style="max-width:240px" required>
+    <select name="vehicle_type" aria-label="Vehicle type" style="max-width:180px">{% for t in vehicle_types %}<option value="{{ t }}">{{ t }}</option>{% endfor %}</select>
+    <button class="btn small" type="submit">Add vehicle</button>
+  </form>
+</section>
+{% else %}
+<section class="notice info"><div><b>Administrator account</b><div class="muted">Admin accounts manage zones, users and reports. They do not own vehicles or reservations.</div></div></section>
+{% endif %}
+{% endblock %}

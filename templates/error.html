@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block cls %}mid{% endblock %}
+{% block title %}{{ code }} · {{ title }} · Campus Parking{% endblock %}
+{% block nav %}<div class="navrow"><h1>{{ title }}</h1></div>{% endblock %}
+{% block body %}
+<section class="card center">
+  <div class="errcode" aria-hidden="true">{{ code }}</div>
+  <h2>{{ title }}</h2>
+  <p class="muted" style="max-width:460px;margin:8px auto 0">{{ message }}</p>
+  <div class="actions-row" style="justify-content:center;margin-top:20px">
+    <a class="btn" href="{{ url_for('dashboard') }}">Back to dashboard</a>
+    {% if not current_user %}<a class="btn sec" href="{{ url_for('login') }}">Sign in</a>{% endif %}
+  </div>
+</section>
+{% endblock %}

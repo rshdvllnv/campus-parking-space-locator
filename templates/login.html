@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block cls %}mid{% endblock %}
+{% block title %}Sign in · Campus Parking{% endblock %}
+{% block nav %}<div class="navrow"><h1>Sign in</h1></div>{% endblock %}
+{% block body %}
+<div class="authcard">
+  <p class="muted" style="margin-top:0">Reserve and manage parking slots with your campus account.</p>
+  <form method="post" action="{{ url_for('login') }}" class="formcol">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <input type="hidden" name="next" value="{{ next }}">
+    <div><label class="field" for="username">Username or email</label>
+      <input id="username" name="username" autocomplete="username" required autofocus value="{{ username }}"></div>
+    <div><label class="field" for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required></div>
+    <button class="btn" type="submit">Sign in</button>
+  </form>
+  <p class="muted" style="text-align:center">New here? <a href="{{ url_for('register') }}">Create an account</a></p>
+  <details class="demo">
+    <summary>Demo accounts</summary>
+    <p class="muted" style="margin:8px 0 0">Driver: <b>rasheed</b> / <b>Driver@123</b><br>
+      Administrator: <b>admin</b> / <b>Admin@123</b><br>
+      Other driver accounts: <b>racid</b>, <b>mark</b>, <b>villena</b> (same driver password).</p>
+  </details>
+</div>
+{% endblock %}

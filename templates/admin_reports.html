@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block cls %}wide{% endblock %}
+{% block title %}Reports · Campus Parking{% endblock %}
+{% block nav %}<div class="navrow"><a class="back" href="{{ url_for('admin') }}">&larr; Dashboard</a><h1>Reports</h1><span class="spacer"></span><a class="btn small" href="{{ url_for('admin_reports_csv') }}">Download CSV</a></div>{% endblock %}
+{% block body %}
+<section class="stats">
+  <div class="stat"><span class="muted">Reservations</span><b>{{ total }}</b></div>
+  <div class="stat"><span class="muted">Completed</span><b class="green">{{ counts.get('Completed', 0) }}</b></div>
+  <div class="stat"><span class="muted">Active</span><b>{{ counts.get('Active', 0) }}</b></div>
+  <div class="stat"><span class="muted">Expired</span><b class="red">{{ counts.get('Expired', 0) }}</b></div>
+  <div class="stat"><span class="muted">Cancelled</span><b>{{ counts.get('Cancelled', 0) }}</b></div>
+  <div class="stat"><span class="muted">Completion rate</span><b>{{ ((counts.get('Completed', 0) / total * 100) if total else 0)|round(1) }}%</b></div>
+</section>
+
+<div class="cols">
+  <section class="card">
+    <h2>Zone utilization</h2>
+    <p class="muted">Live availability and occupancy by zone.</p>
+    <div class="tablewrap"><table><thead><tr><th>Zone</th><th>Available</th><th>Occupied</th><th>Reserved</th><th>Utilization</th></tr></thead><tbody>
+    {% for z in zones %}<tr><td><b>{{ z.zone_name }}</b></td><td class="green">{{ z.available }}</td><td>{{ z.occupied }}</td><td>{{ z.reserved }}</td>
+      <td><div class="minibar"><i style="width:{{ (((z.occupied + z.reserved) / z.total_capacity * 100) if z.total_capacity else 0) }}%"></i></div><span class="muted">{{ (((z.occupied + z.reserved) / z.total_capacity * 100) if z.total_capacity else 0)|round(0) }}%</span></td></tr>
+    {% else %}<tr><td colspan="5" class="muted">No zones yet.</td></tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+
+  <section class="card">
+    <h2>Busiest hours</h2>
+    <p class="muted">Reservations by hour of day, all recorded activity.</p>
+    {% for hour, count in peak %}
+      <div class="hbar"><span class="mono">{{ '%02d:00' % hour }}</span><div class="hbartrack"><i style="width:{{ (count / peak_max * 100) if peak_max else 0 }}%"></i></div><b>{{ count }}</b></div>
+    {% else %}<p class="empty">No reservation activity yet.</p>{% endfor %}
+  </section>
+</div>
+
+<section class="card">
+  <div class="row"><div><h2>Recent reservations</h2><p class="muted" style="margin:4px 0 0">Latest 15 records across all drivers.</p></div><a class="muted" href="{{ url_for('admin_reports_csv') }}">Export full CSV &darr;</a></div>
+  <div class="tablewrap" style="margin-top:12px"><table><thead><tr><th>Reference</th><th>Driver</th><th>Vehicle</th><th>Slot</th><th>Reserved at</th><th>Status</th></tr></thead><tbody>
+  {% for r in rows %}<tr><td>PK-{{ '%06d' % r.res_id }}</td><td>{{ r.driver_name }}</td><td>{{ r.plate_number }} · {{ r.vehicle_type }}</td><td>{{ r.zone_name }} · {{ r.slot_label }}</td><td>{{ r.reservation_time }}</td><td><b>{{ r.status }}</b></td></tr>
+  {% else %}<tr><td colspan="6" class="muted">No reservations recorded.</td></tr>{% endfor %}
+  </tbody></table></div>
+  <p class="muted" style="margin:12px 0 0">Generated {{ generated }} (Asia/Manila) · CSV includes all reservation records.</p>
+</section>
+{% endblock %}

@@ -38,3 +38,17 @@ CREATE TABLE IF NOT EXISTS reservation (
 -- Business rule 3: one Active reservation per slot (enforced by the database)
 CREATE UNIQUE INDEX IF NOT EXISTS ux_one_active_per_slot
   ON reservation(slot_id) WHERE status = 'Active';
+
+-- EXT: application accounts (authentication, roles and ownership)
+CREATE TABLE IF NOT EXISTS app_user (
+  user_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+  username      VARCHAR(40)  NOT NULL UNIQUE,
+  email         VARCHAR(120) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role          VARCHAR(10)  NOT NULL CHECK (role IN ('Driver','Admin')),
+  driver_id     INTEGER UNIQUE REFERENCES driver(driver_id),
+  is_active     INTEGER NOT NULL DEFAULT 1 CHECK (is_active IN (0,1)),
+  created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS ix_app_user_role ON app_user(role);
+

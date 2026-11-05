@@ -1,25 +1,55 @@
 {% extends "base.html" %}
-{% block nav %}<div class="navrow"><h1>Parking Dashboard</h1></div>{% endblock %}
+{% block title %}Parking Dashboard · Campus Parking{% endblock %}
+{% block nav %}<div class="navrow"><h1>Parking Dashboard</h1>{% if current_user and current_user.role == 'Driver' %}<span class="spacer"></span><span class="muted">Holds are limited to {{ HOLD_MIN }} minutes</span>{% endif %}</div>{% endblock %}
 {% block body %}
 <div id="live" class="stack">
-<section class="card" id="campus"><div class="label">Campus availability</div>
- <div><span class="metric {{ 'green' if avail else 'red' }}">{{ avail }}</span> <span style="font-size:20px">/ {{ total }} slots</span>
+{% if my_active %}
+<section class="notice {{ 'warning' if my_active.secs <= 120 else 'info' }}" role="status">
+  <div><b>Your hold is active: {{ my_active.zone_name }} · {{ my_active.slot_label }}</b>
+    <div class="muted">{{ my_active.secs // 60 }}m {{ '%02d' % (my_active.secs % 60) }}s left. Confirm arrival before it expires.</div></div>
+  <a class="btn small" href="{{ url_for('active', res_id=my_active.res_id) }}">View hold</a>
+</section>
+{% elif not current_user %}
+<section class="notice info">
+  <div><b>Sign in to reserve a slot</b>
+    <div class="muted">Availability is public. An account is required to hold a slot and confirm arrival.</div></div>
+  <a class="btn small" href="{{ url_for('login', next=url_for('dashboard')) }}">Sign in</a>
+</section>
+{% elif current_user.role == 'Driver' and not my_active %}
+<section class="notice success">
+  <div><b>No active hold</b><div class="muted">Choose a zone below to reserve your next parking slot.</div></div>
+</section>
+{% endif %}
+
+<section class="card" id="campus">
+ <div class="row"><div class="label">Campus availability</div><span class="pill">{{ 'Live' if current_user else 'Public view' }}</span></div>
+ <div><span class="metric {{ 'green' if avail else 'red' }}">{{ avail }}</span> <span class="metric-sub">/ {{ total }} slots</span>
  <span class="label {{ 'green' if avail else 'red' }}">{{ 'Available' if avail else 'Full' }}</span></div>
- <div class="muted">&#8635; Last updated {{ now().strftime('%H:%M:%S') }} · live data</div></section>
+ <div class="bar"><i class="{{ 'red-bar' if not avail }}" style="width:{{ (avail / total * 100) if total else 0 }}%"></i></div>
+ <div class="muted">&#8635; Last updated {{ now().strftime('%H:%M:%S') }} · refreshed every 2 seconds</div>
+</section>
+
 <div class="label">Choose a parking zone</div>
 <div class="zone-grid">
-{% for z in zones %}<section class="card">
+{% for z in zones %}<section class="card zonecard">
  <div class="row"><h2>{{ z.zone_name }}</h2>
  {% if z.available %}<span class="badge b-av">&#10003; Available</span>{% else %}<span class="badge b-full">&#10007; Full</span>{% endif %}</div>
- <div><span class="metric {{ 'green' if z.available else 'red' }}">{{ z.available }}</span> available <span class="muted">/ {{ z.total_capacity }} total</span></div>
- <div class="bar"><i style="width:{{ (z.available / z.total_capacity * 100) if z.total_capacity else 0 }}%"></i></div>
+ <div><span class="metric {{ 'green' if z.available else 'red' }}">{{ z.available }}</span> <span class="metric-sub">available / {{ z.total_capacity }} total</span></div>
+ <div class="bar"><i class="{{ 'red-bar' if not z.available }}" style="width:{{ (z.available / z.total_capacity * 100) if z.total_capacity else 0 }}%"></i></div>
  {% if z.available %}<a class="btn" href="{{ url_for('zone_slots', zone_id=z.zone_id) }}">View Slots</a>
  {% else %}<span class="btn disabled" aria-disabled="true">&#128274; View Slots</span>
  <p class="reason">{{ z.zone_name }} is full – choose another zone.</p>{% endif %}
  <p class="muted" style="margin:8px 0 0">{{ z.occupied }} occupied · {{ z.reserved }} reserved</p>
 </section>{% endfor %}
+{% if not zones %}<div class="empty">No parking zones have been configured yet.</div>{% endif %}
 </div>
-<p class="muted">Holds last up to {{ HOLD_MIN }} minutes. Availability refreshes every 2 seconds.</p>
+
+<section class="steps" aria-label="How reservations work">
+  <div class="step"><span aria-hidden="true">1</span><div><b>Pick a zone</b><small>See live slot availability.</small></div></div>
+  <div class="step"><span aria-hidden="true">2</span><div><b>Reserve for {{ HOLD_MIN }} minutes</b><small>Pick a slot and confirm your vehicle.</small></div></div>
+  <div class="step"><span aria-hidden="true">3</span><div><b>Confirm arrival</b><small>Mark yourself parked or the hold expires.</small></div></div>
+</section>
+<p class="muted">Holds last up to {{ HOLD_MIN }} minutes and cannot be extended. Availability refreshes every 2 seconds.</p>
 </div>
 {% endblock %}
 {% block scripts %}<script>

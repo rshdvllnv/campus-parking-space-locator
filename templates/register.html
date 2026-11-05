@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block cls %}mid{% endblock %}
+{% block title %}Create account · Campus Parking{% endblock %}
+{% block nav %}<div class="navrow"><a class="back" href="{{ url_for('login') }}">&larr; Sign in</a><h1>Create account</h1></div>{% endblock %}
+{% block body %}
+<div class="authcard">
+  <p class="muted" style="margin-top:0">A driver account lets you reserve slots, manage vehicles and confirm arrivals.</p>
+  <form method="post" action="{{ url_for('register') }}" class="formcol">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <div><label class="field" for="full_name">Full name</label>
+      <input id="full_name" name="full_name" maxlength="100" autocomplete="name" required value="{{ form.full_name }}"></div>
+    <div class="formgrid">
+      <div><label class="field" for="username">Username</label>
+        <input id="username" name="username" maxlength="30" autocomplete="username" required value="{{ form.username }}">
+        <p class="hint">3–30 characters: letters, numbers, dot, dash or underscore.</p></div>
+      <div><label class="field" for="email">Email</label>
+        <input id="email" name="email" type="email" maxlength="120" autocomplete="email" required value="{{ form.email }}"></div>
+    </div>
+    <div><label class="field" for="driver_role">I am a</label>
+      <select id="driver_role" name="driver_role">
+        <option value="Student" {{ 'selected' if form.driver_role == 'Student' }}>Student</option>
+        <option value="Faculty" {{ 'selected' if form.driver_role == 'Faculty' }}>Faculty</option>
+      </select></div>
+    <div class="formgrid">
+      <div><label class="field" for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required>
+        <p class="hint">At least 8 characters, with a letter and a number.</p></div>
+      <div><label class="field" for="confirm_password">Confirm password</label>
+        <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" minlength="8" required></div>
+    </div>
+    <button class="btn" type="submit">Create account</button>
+  </form>
+  <p class="muted" style="text-align:center">Already registered? <a href="{{ url_for('login') }}">Sign in</a></p>
+</div>
+{% endblock %}
