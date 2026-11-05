@@ -8,11 +8,18 @@ from datetime import datetime, timedelta
 from flask import Flask, g, render_template, request, redirect, url_for, jsonify, flash
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.environ.get("PARKING_DB", os.path.join(BASE, "parking.db"))
-DATABASE_URL = os.environ.get("DATABASE_URL", "")
+DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
 USE_PG = DATABASE_URL.startswith(("postgres://", "postgresql://"))
+# Vercel's filesystem is read-only (except /tmp), so fall back to /tmp when no database URL is set.
+if os.environ.get("PARKING_DB"):
+    DB_PATH = os.environ["PARKING_DB"]
+elif os.environ.get("VERCEL") and not USE_PG:
+    DB_PATH = "/tmp/parking.db"
+else:
+    DB_PATH = os.path.join(BASE, "parking.db")
 HOLD_MIN = 15
-app = Flask(__name__)
+# Static files live in public/ so Vercel serves them from the CDN and Flask serves them locally.
+app = Flask(__name__, static_folder="public", static_url_path="")
 app.secret_key = os.environ.get("SECRET_KEY", "cpe304l-group12")
 FMT = "%Y-%m-%d %H:%M:%S"
 
