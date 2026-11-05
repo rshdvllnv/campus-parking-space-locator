@@ -56,6 +56,8 @@ select:focus,input:focus,a:focus-visible,button:focus-visible{outline:3px solid 
 label.field{display:block;font-size:14px;font-weight:600;margin-bottom:4px}
 .spacer{flex:1}
 .footer{display:flex;flex-direction:column;gap:12px;margin-top:auto}
+.stack{display:flex;flex-direction:column;gap:16px}
+.zone-grid{display:grid;grid-template-columns:1fr;gap:16px}
 /* admin */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
 .stat{border:1px solid var(--border);border-radius:16px;padding:12px 16px}
@@ -69,3 +71,26 @@ td{padding:8px 12px;border-top:1px solid var(--border);vertical-align:middle}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:760px){.cols{grid-template-columns:1fr}}
 h2{font-size:18px;line-height:26px;margin:0}
+/* Desktop: use the available width while keeping the phone layout below 900px. */
+@media(min-width:900px){
+  .app{max-width:1180px;border-left:1px solid var(--border);border-right:1px solid var(--border);box-shadow:0 0 60px rgba(23,59,101,.06)}
+  .app.mid{max-width:760px}
+  .app.wide{max-width:1360px}
+  header.top{padding:16px 28px}
+  .logo{width:36px;height:36px;border-radius:10px}
+  .brand{font-size:16px}
+  .navrow{padding:4px 28px;min-height:64px}
+  .navrow h1,h1.title{font-size:24px;line-height:32px}
+  main{padding:24px 28px;gap:20px}
+  .card{padding:20px;box-shadow:0 1px 2px rgba(23,59,101,.04)}
+  .metric{font-size:38px;line-height:46px}
+  .zone-grid{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+  .grid{grid-template-columns:repeat(auto-fit,minmax(108px,1fr));gap:14px}
+  .slot{min-height:112px}
+  .stats{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+  .footer{width:100%;max-width:520px;margin-left:auto;margin-right:auto}
+  .tablewrap{border-radius:14px}
+}
+@media(min-width:1400px){
+  .app.wide{max-width:1480px}
+}

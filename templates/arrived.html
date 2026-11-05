@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block cls %}mid{% endblock %}
 {% block nav %}<div class="navrow"><a class="back" href="{{ url_for('dashboard') }}">&larr; Back</a><h1>Arrival Confirmed</h1></div>{% endblock %}
 {% block body %}
 <div class="flash success"><b>&#10003; You're parked</b><br>Arrival confirmed. {{ r.slot_label }} has changed from Reserved to Occupied.</div>

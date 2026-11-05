@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block cls %}mid{% endblock %}
 {% block nav %}<div class="navrow"><a class="back" href="{{ url_for('zone_slots', zone_id=slot.zone_id, slot=slot.slot_id) }}">&larr; Back</a><h1>Reservation Review</h1></div>{% endblock %}
 {% block body %}
 <form method="post" action="{{ url_for('reserve') }}" style="display:flex;flex-direction:column;gap:16px;flex:1">

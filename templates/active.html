@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block cls %}mid{% endblock %}
 {% block nav %}<div class="navrow"><a class="back" href="{{ url_for('dashboard') }}">&larr; Back</a><h1>Active Reservation</h1></div>{% endblock %}
 {% block body %}
 {% if r.status == 'Active' %}
