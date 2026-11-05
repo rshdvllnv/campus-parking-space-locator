@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block nav %}<div class="navrow"><h1>Parking Dashboard</h1></div>{% endblock %}
+{% block body %}
+<div id="live" style="display:flex;flex-direction:column;gap:16px">
+<section class="card" id="campus"><div class="label">Campus availability</div>
+ <div><span class="metric {{ 'green' if avail else 'red' }}">{{ avail }}</span> <span style="font-size:20px">/ {{ total }} slots</span>
+ <span class="label {{ 'green' if avail else 'red' }}">{{ 'Available' if avail else 'Full' }}</span></div>
+ <div class="muted">&#8635; Last updated {{ now().strftime('%H:%M:%S') }} · live data</div></section>
+<div class="label">Choose a parking zone</div>
+{% for z in zones %}<section class="card">
+ <div class="row"><h2>{{ z.zone_name }}</h2>
+ {% if z.available %}<span class="badge b-av">&#10003; Available</span>{% else %}<span class="badge b-full">&#10007; Full</span>{% endif %}</div>
+ <div><span class="metric {{ 'green' if z.available else 'red' }}">{{ z.available }}</span> available <span class="muted">/ {{ z.total_capacity }} total</span></div>
+ <div class="bar"><i style="width:{{ (z.available / z.total_capacity * 100) if z.total_capacity else 0 }}%"></i></div>
+ {% if z.available %}<a class="btn" href="{{ url_for('zone_slots', zone_id=z.zone_id) }}">View Slots</a>
+ {% else %}<span class="btn disabled" aria-disabled="true">&#128274; View Slots</span>
+ <p class="reason">{{ z.zone_name }} is full – choose another zone.</p>{% endif %}
+ <p class="muted" style="margin:8px 0 0">{{ z.occupied }} occupied · {{ z.reserved }} reserved</p>
+</section>{% endfor %}
+<p class="muted">Holds last up to {{ HOLD_MIN }} minutes. Availability refreshes every 2 seconds.</p>
+</div>
+{% endblock %}
+{% block scripts %}<script>
+setInterval(async()=>{try{const t=await (await fetch(location.href)).text();
+const d=new DOMParser().parseFromString(t,'text/html');document.getElementById('live').innerHTML=d.getElementById('live').innerHTML}catch(e){}},2000);
+</script>{% endblock %}

@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}Campus Parking Space Locator{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
+<body><div class="app {% block cls %}{% endblock %}">
+<header class="top"><div class="logo">P</div><div class="brand">Campus Parking Space Locator</div>
+<span class="spacer"></span>{% block toplink %}<a class="back" href="{{ url_for('admin') }}">Admin</a>{% endblock %}</header>
+{% block nav %}{% endblock %}
+<main>
+{% with msgs = get_flashed_messages(with_categories=true) %}{% for c,m in msgs %}<div class="flash {{c}}" role="alert">{{m}}</div>{% endfor %}{% endwith %}
+{% block body %}{% endblock %}
+</main></div>{% block scripts %}{% endblock %}</body></html>
