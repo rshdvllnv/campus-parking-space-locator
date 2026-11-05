@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block cls %}wide{% endblock %}
+{% block toplink %}<a class="back" href="{{ url_for('dashboard') }}">Driver view</a>{% endblock %}
+{% block nav %}<div class="navrow"><h1>Administrator Dashboard</h1></div>{% endblock %}
+{% block body %}
+<section class="stats">
+<div class="stat"><span class="muted">Total slots</span><b>{{ stats.total }}</b></div>
+<div class="stat"><span class="muted">Available</span><b class="green">{{ stats.avail }}</b></div>
+<div class="stat"><span class="muted">Occupied</span><b class="red">{{ stats.occ }}</b></div>
+<div class="stat"><span class="muted">Reserved</span><b>{{ stats.res }}</b></div>
+<div class="stat"><span class="muted">Drivers / Vehicles</span><b>{{ stats.drivers }} / {{ stats.vehicles }}</b></div></section>
+<section><h2>Parking zones &amp; slot capacity</h2><p class="muted">Updates parking_zone.total_capacity and adds or removes free slots.</p>
+<div class="tablewrap"><table><tr><th>Zone</th><th>Capacity</th><th>Available</th><th>Occupied</th><th>Reserved</th><th>Update capacity</th></tr>
+{% for z in zones %}<tr><td><b>{{ z.zone_name }}</b></td><td>{{ z.total_capacity }}</td><td class="green"><b>{{ z.available }}</b></td><td>{{ z.occupied }}</td><td>{{ z.reserved }}</td>
+<td><form class="inline" method="post" action="{{ url_for('zone_capacity', zone_id=z.zone_id) }}"><input type="number" min="1" name="total_capacity" value="{{ z.total_capacity }}" aria-label="Capacity for {{ z.zone_name }}"><button class="btn small" type="submit">Save</button></form></td></tr>{% endfor %}</table></div>
+<form class="inline" style="margin-top:12px;flex-wrap:wrap" method="post" action="{{ url_for('zone_add') }}"><input type="text" name="zone_name" placeholder="New zone name, e.g. Zone C" style="max-width:260px" aria-label="New zone name"><input type="number" min="1" name="total_capacity" placeholder="Slots" aria-label="Slots"><button class="btn small" type="submit">Add Zone</button></form></section>
+<div class="cols">
+<section><h2>Slot monitor</h2><p class="muted">Simulate a vehicle entering or leaving (FR-005 sensor event).</p>
+<div class="tablewrap"><table><tr><th>Slot</th><th>Zone</th><th>Status</th><th>Action</th></tr>
+{% for s in slots %}<tr><td><b>{{ s.slot_label }}</b></td><td>{{ s.zone_name }}</td>
+<td><span class="badge {{ {'Available':'b-av','Occupied':'b-occ','Reserved':'b-res'}[s.state] }}">{{ s.state }}</span></td>
+<td>{% if s.state != 'Reserved' %}<form method="post" action="{{ url_for('slot_toggle', slot_id=s.slot_id) }}"><button class="btn sec small" type="submit">{{ 'Vehicle leaves' if s.is_occupied else 'Vehicle enters' }}</button></form>{% else %}<span class="muted">On hold</span>{% endif %}</td></tr>{% endfor %}</table></div></section>
+<section><h2>Reservation audit log</h2><p class="muted">Latest 15 records from the reservation table.</p>
+<div class="tablewrap"><table><tr><th>Ref</th><th>Slot</th><th>Plate</th><th>Time</th><th>Status</th></tr>
+{% for r in log %}<tr><td>PK-{{ '%06d' % r.res_id }}</td><td>{{ r.slot_label }}</td><td>{{ r.plate_number }}</td><td>{{ r.reservation_time[11:16] }}</td><td><b>{{ r.status }}</b></td></tr>{% endfor %}</table></div></section>
+</div>
+{% endblock %}

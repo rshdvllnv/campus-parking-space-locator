@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block nav %}<div class="navrow"><a class="back" href="{{ url_for('dashboard') }}">&larr; Back</a><h1>{{ zone.zone_name }} slots</h1></div>{% endblock %}
+{% block body %}
+<div id="live" style="display:flex;flex-direction:column;gap:16px;flex:1">
+<div class="label">Choose an available slot</div>
+<div class="muted">{{ zone.available }} available / {{ zone.total_capacity }} total · updated {{ now().strftime('%H:%M:%S') }}</div>
+{% if not zone.available %}<div class="flash warning">No free slot in this zone. <a href="{{ url_for('dashboard') }}">Choose another zone</a>.</div>{% endif %}
+<div class="grid">
+{% for s in slots %}
+ {% if s.slot_id == sel %}<a class="slot s-sel" aria-current="true" href="{{ url_for('zone_slots', zone_id=zone.zone_id) }}">&#10003; {{ s.slot_label }}<small>Selected</small></a>
+ {% elif s.state == 'Available' %}<a class="slot s-av" href="{{ url_for('zone_slots', zone_id=zone.zone_id, slot=s.slot_id) }}">&#9711; {{ s.slot_label }}<small>Available</small></a>
+ {% elif s.state == 'Reserved' %}<span class="slot s-res" aria-disabled="true">&#9719; {{ s.slot_label }}<small>Reserved</small></span>
+ {% else %}<span class="slot s-occ" aria-disabled="true">&#10007; {{ s.slot_label }}<small>Occupied</small></span>{% endif %}
+{% endfor %}</div>
+<div class="legend"><span class="green">&#10003; Available · selectable</span><span class="red">&#10007; Occupied · disabled</span>
+<span>&#10003; Selected · your choice</span><span>&#9719; Reserved · unavailable</span></div>
+<div class="slotbox">{% if sel %}<b>Selected: {{ zone.zone_name }} · {{ sel_label }}</b><span class="muted">Not reserved yet. Continue to review.</span>
+{% else %}<b>No slot selected</b><span class="muted">Tap an available slot. Occupied and reserved slots cannot be selected.</span>{% endif %}</div>
+</div>
+<div class="footer">
+{% if sel %}<a class="btn" href="{{ url_for('review', slot=sel) }}">Continue</a>
+{% else %}<span class="btn disabled" aria-disabled="true">Continue</span><p class="reason">Select an available slot to continue.</p>{% endif %}
+<a class="btn sec" href="{{ url_for('dashboard') }}">Back</a></div>
+{% endblock %}
+{% block scripts %}<script>
+setInterval(async()=>{try{const t=await (await fetch(location.href)).text();
+const d=new DOMParser().parseFromString(t,'text/html');document.getElementById('live').innerHTML=d.getElementById('live').innerHTML;
+const f=d.querySelector('.footer');if(f)document.querySelector('.footer').innerHTML=f.innerHTML}catch(e){}},2000);
+</script>{% endblock %}

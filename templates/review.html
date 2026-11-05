@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block nav %}<div class="navrow"><a class="back" href="{{ url_for('zone_slots', zone_id=slot.zone_id, slot=slot.slot_id) }}">&larr; Back</a><h1>Reservation Review</h1></div>{% endblock %}
+{% block body %}
+<form method="post" action="{{ url_for('reserve') }}" style="display:flex;flex-direction:column;gap:16px;flex:1">
+<div class="label">Check your parking details</div>
+<section class="card"><div class="row"><span>Selected parking slot</span><span class="badge b-res">&#10003; Selected</span></div>
+<div class="slotbox" style="margin:12px 0"><span class="muted" style="font-weight:600;font-size:14px">{{ slot.zone_name }}</span><b>{{ slot.slot_label }}</b></div>
+<div class="row"><span class="muted">Reference</span><b>Assigned after you confirm</b></div>
+<div class="row"><span class="muted">Reservation time</span><b>{{ start.strftime('%H:%M') }}–{{ end.strftime('%H:%M') }} · {{ HOLD_MIN }} min</b></div>
+</section>
+<div><label class="field" for="plate">Vehicle (plate number)</label>
+<select id="plate" name="plate_number" required>{% for v in vehicles %}<option value="{{ v.plate_number }}">{{ v.plate_number }} · {{ v.vehicle_type }} · {{ v.name }}</option>{% endfor %}</select></div>
+<div class="slotbox"><div class="label">{{ HOLD_MIN }}-minute reservation limit</div><span class="muted" style="font-size:14px;line-height:20px">Confirm arrival within {{ HOLD_MIN }} minutes of confirming. Your hold cannot be extended; an unconfirmed hold expires automatically.</span></div>
+<input type="hidden" name="slot_id" value="{{ slot.slot_id }}">
+<div class="footer"><button class="btn" type="submit">Confirm Reservation</button>
+<a class="btn sec" href="{{ url_for('zone_slots', zone_id=slot.zone_id) }}">Back</a></div>
+</form>
+{% endblock %}

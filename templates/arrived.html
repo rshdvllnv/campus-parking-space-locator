@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block nav %}<div class="navrow"><a class="back" href="{{ url_for('dashboard') }}">&larr; Back</a><h1>Arrival Confirmed</h1></div>{% endblock %}
+{% block body %}
+<div class="flash success"><b>&#10003; You're parked</b><br>Arrival confirmed. {{ r.slot_label }} has changed from Reserved to Occupied.</div>
+<section class="card"><div class="row"><span>My Reservation</span><span class="badge b-occ">&#10007; Occupied</span></div>
+<div class="slotbox" style="margin:12px 0"><span class="muted" style="font-weight:600;font-size:14px">{{ r.zone_name }}</span><b>{{ r.slot_label }}</b></div>
+<div class="row"><span class="muted">Reference</span><b>PK-{{ '%06d' % r.res_id }}</b></div>
+<div class="row"><span class="muted">Vehicle</span><b>{{ r.plate_number }}</b></div>
+<p class="muted" style="margin:8px 0 0">The countdown has stopped.</p></section>
+<section class="card"><div class="label">Updated campus availability</div>
+<div><span class="metric green">{{ avail }}</span> / {{ total }} slots <span class="label green">Available</span></div></section>
+<div class="footer"><a class="btn" href="{{ url_for('dashboard') }}">Return to Dashboard</a></div>
+{% endblock %}
