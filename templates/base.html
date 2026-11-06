@@ -11,41 +11,63 @@
 <a class="skip" href="#main">Skip to content</a>
 <div class="app {% block cls %}{% endblock %}">
 <header class="top">
-  <a class="identity" href="{{ url_for('dashboard') }}" aria-label="Campus Parking home">
-    <span class="logo" aria-hidden="true">P</span>
-    <span><span class="brand">Campus Parking</span><span class="subbrand">Space Locator</span></span>
-  </a>
-  <span class="spacer"></span>
-  <nav class="topnav" aria-label="Main navigation">
-    {% if current_user %}
-      {% if current_user.role == 'Admin' %}
-        <a href="{{ url_for('admin') }}" class="{{ 'on' if request.endpoint == 'admin' }}">Dashboard</a>
-        <a href="{{ url_for('admin_reports') }}" class="{{ 'on' if request.endpoint in ('admin_reports','admin_reports_csv') }}">Reports</a>
-        <a href="{{ url_for('admin_users') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('admin_user') }}">Users</a>
+  <div class="topinner">
+    <a class="identity" href="{{ url_for('dashboard') }}" aria-label="Campus Parking home">
+      <span class="logo" aria-hidden="true">P</span>
+      <span><span class="brand">Campus Parking</span><span class="subbrand">Space Locator</span></span>
+    </a>
+    <span class="spacer"></span>
+    <nav class="topnav" aria-label="Main navigation">
+      {% if current_user %}
+        {% if current_user.role == 'Admin' %}
+          <a href="{{ url_for('admin') }}" class="{{ 'on' if request.endpoint == 'admin' }}">Dashboard</a>
+          <a href="{{ url_for('admin_reports') }}" class="{{ 'on' if request.endpoint in ('admin_reports','admin_reports_csv') }}">Reports</a>
+          <a href="{{ url_for('admin_users') }}" class="{{ 'on' if request.endpoint and request.endpoint.startswith('admin_user') }}">Users</a>
+        {% else %}
+          <a href="{{ url_for('dashboard') }}" class="{{ 'on' if request.endpoint in ('dashboard','zone_slots') }}">Find parking</a>
+          <a href="{{ url_for('my_reservations') }}" class="{{ 'on' if request.endpoint in ('my_reservations','active','arrived') }}">My reservations{% if nav_active_res %}<span class="dot" aria-label="active reservation"></span>{% endif %}</a>
+        {% endif %}
+        <details class="usermenu">
+          <summary class="userchip" title="Account menu">
+            <span>{{ current_user.username }}</span>
+            <span class="rolebadge">{{ current_user.role }}</span>
+            <span class="caret" aria-hidden="true">&#9662;</span>
+          </summary>
+          <div class="usermenu-panel">
+            <div class="menuhead">Signed in as {{ current_user.username }}</div>
+            <a href="{{ url_for('account') }}">Account settings</a>
+            <form method="post" action="{{ url_for('logout') }}">
+              <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+              <button class="menusignout" type="submit">Sign out</button>
+            </form>
+          </div>
+        </details>
       {% else %}
-        <a href="{{ url_for('dashboard') }}" class="{{ 'on' if request.endpoint in ('dashboard','zone_slots') }}">Find parking</a>
-        <a href="{{ url_for('my_reservations') }}" class="{{ 'on' if request.endpoint in ('my_reservations','active','arrived') }}">My reservations{% if nav_active_res %}<span class="dot" aria-label="active reservation"></span>{% endif %}</a>
+        <a href="{{ url_for('login') }}">Sign in</a>
+        <a class="btn small topbtn" href="{{ url_for('register') }}">Create account</a>
       {% endif %}
-      <a class="userchip" href="{{ url_for('account') }}" title="Account settings">
-        {{ current_user.username }} <span class="rolebadge">{{ current_user.role }}</span>
-      </a>
-      <form method="post" action="{{ url_for('logout') }}" class="logoutform">
-        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
-        <button class="linkbtn" type="submit">Sign out</button>
-      </form>
-    {% else %}
-      <a href="{{ url_for('login') }}">Sign in</a>
-      <a class="btn small topbtn" href="{{ url_for('register') }}">Create account</a>
-    {% endif %}
-  </nav>
+    </nav>
+  </div>
 </header>
-{% block nav %}{% endblock %}
+<div class="navband">{% block nav %}{% endblock %}</div>
 <main id="main">
 {% with msgs = get_flashed_messages(with_categories=true) %}{% for c,m in msgs %}<div class="flash {{c}}" role="alert">{{m}}</div>{% endfor %}{% endwith %}
 {% block body %}{% endblock %}
 </main>
 <footer class="foot">CPE 304L · Group 12 · Campus Parking Space Locator</footer>
 </div>
+<script>
+document.addEventListener('click', function (e) {
+  document.querySelectorAll('details.usermenu[open]').forEach(function (d) {
+    if (!d.contains(e.target)) d.open = false;
+  });
+});
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('details.usermenu[open]').forEach(function (d) { d.open = false; });
+  }
+});
+</script>
 {% block scripts %}{% endblock %}
 </body>
 </html>

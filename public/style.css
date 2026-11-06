@@ -2,9 +2,9 @@
 *{box-sizing:border-box}
 body{margin:0;background:#F5F7FA;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color:var(--navy);font-size:16px;line-height:24px}
 a{color:var(--navy)}
-.app{max-width:420px;margin:0 auto;background:#fff;min-height:100vh;display:flex;flex-direction:column}
-.app.wide{max-width:980px}
-header.top{border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.app{width:100%;min-height:100vh;display:flex;flex-direction:column}
+.topinner{width:100%;max-width:1180px;margin:0 auto;padding:12px 32px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header.top{background:#fff;border-bottom:1px solid var(--border)}
 .identity{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;min-height:44px}
 .logo{width:32px;height:32px;border-radius:8px;background:var(--navy);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
 .brand{display:block;font-size:14px;line-height:18px;font-weight:600}
@@ -15,17 +15,26 @@ header.top{border-bottom:1px solid var(--border);padding:12px 16px;display:flex;
 .topnav a.on{text-decoration-thickness:2px}
 .topnav a.btn{color:#fff;padding:0 16px;text-decoration:none}
 .topnav a.btn:hover{background:#244f84;text-decoration:none}
-.userchip{display:inline-flex;align-items:center;gap:6px;background:var(--lb);border-radius:999px;padding:5px 10px;text-decoration:none!important;font-size:12px}
+.usermenu{position:relative}
+.usermenu summary{list-style:none;cursor:pointer}
+.usermenu summary::-webkit-details-marker{display:none}
+.userchip{display:inline-flex;align-items:center;gap:6px;background:var(--lb);border:0;border-radius:999px;padding:5px 10px;text-decoration:none!important;font-size:12px;color:var(--navy)}
+.userchip:hover,.usermenu[open] .userchip{background:#DCE9F6}
+.caret{font-size:9px;line-height:1;color:var(--gray)}
+.usermenu-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:60;min-width:220px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 14px 40px rgba(23,59,101,.18);padding:8px;display:flex;flex-direction:column;gap:2px}
+.menuhead{padding:8px 12px 6px;color:var(--gray);font-size:11px;line-height:15px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.usermenu-panel a,.usermenu-panel button{display:flex;align-items:center;width:100%;min-height:42px;padding:0 12px;border:0;border-radius:9px;background:none;color:var(--navy);font:600 13px Inter,"Segoe UI",Arial,sans-serif;text-align:left;text-decoration:none;cursor:pointer}
+.usermenu-panel a:hover,.usermenu-panel button:hover{background:var(--lb)}
+.usermenu-panel form{margin:0}
+.usermenu-panel .menusignout{color:var(--red)}
 .rolebadge{display:inline-block;background:var(--navy);color:#fff;border-radius:999px;padding:2px 7px;font-size:9px;line-height:12px;letter-spacing:.05em;text-transform:uppercase;font-weight:700}
 .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-left:6px;vertical-align:middle}
-.logoutform{display:inline}
-.linkbtn{background:none;border:0;color:var(--navy);font:600 13px Inter,"Segoe UI",Arial,sans-serif;cursor:pointer;padding:6px 0}
-.linkbtn:hover{text-decoration:underline;text-underline-offset:4px}
 .topbtn{min-height:38px!important;padding:0 14px!important}
-.navrow{border-bottom:1px solid var(--border);padding:4px 16px;display:flex;align-items:center;gap:12px;min-height:56px;flex-wrap:wrap}
+.navband{background:#fff;border-bottom:1px solid var(--border)}
+.navrow{width:100%;max-width:1180px;margin:0 auto;border-bottom:0;padding:4px 32px;display:flex;align-items:center;gap:12px;min-height:56px;flex-wrap:wrap}
 .navrow h1,h1.title{font-size:20px;line-height:28px;margin:0;font-weight:600}
 a.back{display:inline-flex;align-items:center;min-height:44px;min-width:44px;padding:0 8px;color:var(--navy);font-weight:600;text-decoration:none;font-size:14px}
-main{padding:16px;flex:1;display:flex;flex-direction:column;gap:16px}
+main{width:100%;max-width:1180px;margin:0 auto;padding:24px 32px;flex:1;display:flex;flex-direction:column;gap:16px}
 .card{border:1px solid var(--border);border-radius:16px;padding:16px;background:#fff}
 .card.soft{background:var(--lb);border-color:var(--lb)}
 .label{font-size:14px;font-weight:600}
@@ -107,7 +116,7 @@ h2{font-size:18px;line-height:26px;margin:0}
 .step small{display:block;color:var(--gray);font-size:12px;line-height:17px}
 .empty{border:1px dashed var(--border);border-radius:14px;padding:18px;text-align:center;color:var(--gray);font-size:13px}
 .livearea{flex:1}
-.foot{border-top:1px solid var(--border);padding:12px 16px;color:var(--gray);font-size:11px;text-align:center}
+.foot{background:#fff;border-top:1px solid var(--border);padding:16px 32px;color:var(--gray);font-size:11px;text-align:center}
 .authcard{width:100%;max-width:520px;margin:4px auto;border:1px solid var(--border);border-radius:18px;padding:20px;background:#fff}
 .formcol{display:flex;flex-direction:column;gap:14px}
 .formgrid{display:grid;grid-template-columns:1fr;gap:12px}
@@ -126,28 +135,29 @@ h2{font-size:18px;line-height:26px;margin:0}
 .flash.info{border-color:#8DB4E2;color:#1E4B7A;background:#F0F6FC}
 .skip{position:absolute;left:-999px;top:0;background:#fff;color:var(--navy);padding:10px 16px;z-index:100;border-radius:0 0 10px 0}
 .skip:focus{left:0}
+.app.wide .topinner,.app.wide .navrow,.app.wide main{max-width:1480px}
+.app.mid .topinner,.app.mid .navrow,.app.mid main{max-width:920px}
 @media(max-width:760px){
-  header.top{padding:10px 16px;gap:8px}
+  .topinner{padding:10px 16px;gap:8px}
   .topnav{width:100%;gap:8px 14px;font-size:12px;border-top:1px solid var(--border);padding-top:8px}
   .identity{flex:1}
-  .navrow{row-gap:0}
+  .navrow{padding-left:16px;padding-right:16px;row-gap:0}
+  main{padding:16px}
+  .foot{padding:12px 16px}
 }
 @media(min-width:600px){
   .formgrid{grid-template-columns:1fr 1fr}
   .steps{grid-template-columns:repeat(3,1fr)}
 }
 
-/* Desktop: use the available width while keeping the phone layout below 900px. */
+/* Desktop: full-width bands with centered content instead of a floating card. */
 @media(min-width:900px){
-  .app{max-width:1180px;border-left:1px solid var(--border);border-right:1px solid var(--border);box-shadow:0 0 60px rgba(23,59,101,.06)}
-  .app.mid{max-width:760px}
-  .app.wide{max-width:1360px}
-  header.top{padding:16px 28px}
+  .topinner{padding:14px 32px}
   .logo{width:36px;height:36px;border-radius:10px}
   .brand{font-size:16px}
-  .navrow{padding:4px 28px;min-height:64px}
+  .navrow{padding:4px 32px;min-height:64px}
   .navrow h1,h1.title{font-size:24px;line-height:32px}
-  main{padding:24px 28px;gap:20px}
+  main{padding:28px 32px;gap:20px}
   .card{padding:20px;box-shadow:0 1px 2px rgba(23,59,101,.04)}
   .metric{font-size:38px;line-height:46px}
   .zone-grid{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
@@ -156,7 +166,4 @@ h2{font-size:18px;line-height:26px;margin:0}
   .stats{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
   .footer{width:100%;max-width:520px;margin-left:auto;margin-right:auto}
   .tablewrap{border-radius:14px}
-}
-@media(min-width:1400px){
-  .app.wide{max-width:1480px}
 }
