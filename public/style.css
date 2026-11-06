@@ -1,10 +1,11 @@
 :root{--navy:#173B65;--white:#fff;--lb:#EAF1F8;--gray:#6B7280;--green:#15803D;--red:#DC2626;--border:#D7E0EA;--warn:#92400E;--warnbg:#FFF7E6}
 *{box-sizing:border-box}
+html{scrollbar-gutter:stable}
 body{margin:0;background:#F5F7FA;font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;color:var(--navy);font-size:16px;line-height:24px}
 a{color:var(--navy)}
 .app{width:100%;min-height:100vh;display:flex;flex-direction:column}
-.topinner{width:100%;max-width:1180px;margin:0 auto;padding:12px 32px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-header.top{background:#fff;border-bottom:1px solid var(--border)}
+.topinner{width:100%;max-width:1280px;margin:0 auto;padding:12px 32px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header.top{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid var(--border)}
 .identity{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;min-height:44px}
 .logo{width:32px;height:32px;border-radius:8px;background:var(--navy);color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
 .brand{display:block;font-size:14px;line-height:18px;font-weight:600}
@@ -31,10 +32,10 @@ header.top{background:#fff;border-bottom:1px solid var(--border)}
 .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-left:6px;vertical-align:middle}
 .topbtn{min-height:38px!important;padding:0 14px!important}
 .navband{background:transparent}
-.navrow{width:100%;max-width:1180px;margin:0 auto;border-bottom:0;padding:20px 32px 0;display:flex;align-items:center;gap:12px;min-height:0;flex-wrap:wrap}
+.navrow{width:100%;max-width:1280px;margin:0 auto;border-bottom:0;padding:20px 32px 0;display:flex;align-items:center;gap:12px;min-height:0;flex-wrap:wrap}
 .navrow h1,h1.title{font-size:20px;line-height:28px;margin:0;font-weight:600}
 a.back{display:inline-flex;align-items:center;min-height:44px;min-width:44px;padding:0 8px;color:var(--navy);font-weight:600;text-decoration:none;font-size:14px}
-main{width:100%;max-width:1180px;margin:0 auto;padding:16px 32px 24px;flex:1;display:flex;flex-direction:column;gap:16px}
+main{width:100%;max-width:1280px;margin:0 auto;padding:16px 32px 24px;flex:1;display:flex;flex-direction:column;gap:16px}
 .card{border:1px solid var(--border);border-radius:16px;padding:16px;background:#fff}
 .card.soft{background:var(--lb);border-color:var(--lb)}
 .label{font-size:14px;font-weight:600}
@@ -135,8 +136,6 @@ h2{font-size:18px;line-height:26px;margin:0}
 .flash.info{border-color:#8DB4E2;color:#1E4B7A;background:#F0F6FC}
 .skip{position:absolute;left:-999px;top:0;background:#fff;color:var(--navy);padding:10px 16px;z-index:100;border-radius:0 0 10px 0}
 .skip:focus{left:0}
-.app.wide .topinner,.app.wide .navrow,.app.wide main{max-width:1480px}
-.app.mid .topinner,.app.mid .navrow,.app.mid main{max-width:920px}
 @media(max-width:760px){
   .topinner{padding:10px 16px;gap:8px}
   .topnav{width:100%;gap:8px 14px;font-size:12px;border-top:1px solid var(--border);padding-top:8px}
