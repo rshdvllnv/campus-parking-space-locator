@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block cls %}wide{% endblock %}
 {% block title %}User accounts · Campus Parking{% endblock %}
-{% block nav %}<div class="navrow"><a class="back" href="{{ url_for('admin') }}">&larr; Dashboard</a><h1>User accounts</h1><span class="spacer"></span><a class="back" href="{{ url_for('admin_reports') }}">Reports</a></div>{% endblock %}
+{% block nav %}<div class="navrow"><h1>User accounts</h1></div>{% endblock %}
 {% block body %}
 <section class="card">
   <div class="row"><div><div class="label">{{ users|length }} accounts</div><div class="muted">Drivers can reserve slots; administrators manage zones, users and reports.</div></div></div>
