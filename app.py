@@ -288,6 +288,14 @@ def safe_next(target):
     return url_for("dashboard")
 
 
+def landing_url():
+    """Admins land on their dashboard; everyone else lands on the driver dashboard."""
+    user = current_user()
+    if user and user["role"] == "Admin":
+        return url_for("admin")
+    return url_for("dashboard")
+
+
 def login_required(view):
     @wraps(view)
     def wrapped(*args, **kwargs):
@@ -412,7 +420,7 @@ def my_active_reservation():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if current_user():
-        return redirect(url_for("dashboard"))
+        return redirect(landing_url())
 
     next_url = request.values.get("next", "")
     username = request.values.get("username", "")
@@ -432,7 +440,10 @@ def login():
             session["_csrf"] = secrets.token_urlsafe(32)
             session.permanent = True
             flash(f"Welcome back, {user['username']}.", "success")
-            return redirect(safe_next(next_url))
+            target = safe_next(next_url)
+            if user["role"] == "Admin" and not target.startswith("/admin"):
+                target = url_for("admin")
+            return redirect(target)
 
         if not user:
             check_password_hash(dummy_hash(), password)   # reduce username-enumeration timing hints
@@ -450,7 +461,7 @@ def login():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if current_user():
-        return redirect(url_for("dashboard"))
+        return redirect(landing_url())
 
     form = dict(full_name="", username="", email="", driver_role="Student")
     if request.method == "POST":
@@ -596,6 +607,9 @@ def account():
 # ---------------- Driver screens ----------------
 @app.route("/")
 def dashboard():
+    user = current_user()
+    if user and user["role"] == "Admin":
+        return redirect(url_for("admin"))
     expire_old()
     zs = zones()
     total = sum(z["total_capacity"] for z in zs)
